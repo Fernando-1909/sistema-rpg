@@ -1,0 +1,40 @@
+/* Theme Switching */
+[data-theme="dark"] {
+    --color-bg: #121212;
+    --color-card: #1e1e1e;
+    --color-border: #333;
+    --color-text: #f8f9fa;
+    --color-text-light: #adb5bd;
+    
+    /* Ajuste de cores vibrantes no dark mode */
+    --color-purple: #9c27b0;
+    --color-pink: #f06292;
+    
+    /* Imagens */
+    img {
+        filter: brightness(0.9);
+    }
+    
+    /* Cards */
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card:hover {
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Smooth Theme Transition */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme Toggle Icon */
+.theme-toggle i {
+    transition: transform 0.3s ease;
+}
+
+[data-theme="dark"] .theme-toggle i {
+    transform: rotate(180deg);
+}
