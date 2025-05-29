@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'fichas',
+    'sistema_rpg',
 ]
 
 
@@ -37,7 +38,7 @@ ROOT_URLCONF = 'sistema_rpg.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '..', 'frontend')],
+        'DIRS': [os.path.join(BASE_DIR, '..', 'frontend/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,6 +91,12 @@ USE_TZ = True
 
 # Configuração de arquivos estáticos
 STATIC_URL = '/static/'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = '/campanhas/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '../frontend/css'),
