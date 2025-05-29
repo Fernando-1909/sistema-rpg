@@ -1,14 +1,16 @@
-import os
+from django.contrib import admin
+from django.urls import path
+from fichas.views import home, login, registrar_usuario, campanhas  # importe direto as views
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
-from django.urls import path, include
-from django.views.generic import TemplateView
+import os
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('fichas.urls')),  # Sua API ou outras rotas
-    path('', TemplateView.as_view(template_name='index.html'), name='home'),  # Serve seu index.html como home
+    path('', home, name='fichas_home'),  
+    path('login/', login, name='fichas_login'),
+    path('api/registrar/', registrar_usuario, name='registrar_usuario'),
+    path('campanhas/', campanhas, name='campanhas'),
 ]
 
 if settings.DEBUG:
