@@ -26,34 +26,26 @@ def login(request):
             return render(request, 'login.html', {'error': 'Usuário ou senha incorretos.'})
     return render(request, 'login.html')  # GET normal
 
-@csrf_exempt  # Decorador correto (sem o 'd' no final)
+@csrf_exempt
 def registrar_usuario(request):
     if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if not all([username, email, password]):
+            return JsonResponse({'error': 'Todos os campos são obrigatórios.'}, status=400)
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({'error': 'Usuário já existe.'}, status=400)
+
         try:
-            data = json.loads(request.body.decode('utf-8'))  # Adicionado decode
-            username = data.get('username')
-            email = data.get('email')
-            password = data.get('password')
-
-            if not all([username, password, email]):  # Validação adicional
-                return JsonResponse({'error': 'Todos os campos são obrigatórios.'}, status=400)
-
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({'error': 'Usuário já existe.'}, status=400)
-
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                is_staff=False,
-                is_superuser=False
-            )
+            user = User.objects.create_user(username=username, email=email, password=password)
             return JsonResponse({'success': True, 'user_id': user.id})
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'JSON inválido'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Método inválido'}, status=405)
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido.'}, status=405)
 
 def campanhas(request):
     if not request.user.is_authenticated:
