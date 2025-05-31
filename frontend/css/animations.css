@@ -97,3 +97,49 @@
         opacity: 0;
     }
 }
+/* Novas animações para o login */
+@keyframes gradientBG {
+    0% { background-position: 0% 70%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 70%; }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.login-entrance {
+    animation: 
+        fadeIn 0.8s ease forwards,
+        slideUp 0.8s ease forwards;
+}
+
+.modal-entrance {
+    animation: 
+        fadeIn 0.4s ease forwards,
+        popIn 0.4s ease forwards;
+}
+
+.login-entrance {
+  opacity: 0; /* Fallback para browsers sem suporte */
+}
+
+.modal-entrance {
+  opacity: 0;
+  transform: scale(0.9); /* Fallback */
+}
+
+/* Garante que as animações não quebrem em dispositivos com prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
