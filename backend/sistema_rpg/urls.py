@@ -9,7 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='fichas_home'),  
     path('login/', login, name='fichas_login'),
-    path('api/registrar/', registrar_usuario, name='registrar_usuario'),
+    path('registrar/', registrar_usuario, name='registrar_usuario'),
     path('campanhas/', campanhas, name='campanhas'),
 ]
 
