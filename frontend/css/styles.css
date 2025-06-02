@@ -739,3 +739,357 @@ body {
     background-color: rgba(255, 255, 255, 0.5);
     width: 100%;
 }
+
+/* Adicionando ao seu arquivo style.css existente */
+
+/* Estilos específicos para as páginas de campanhas e fichas */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+}
+
+.page-title {
+    font-size: 2rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+}
+
+.page-subtitle {
+    color: var(--color-text-light);
+    margin-bottom: var(--space-md);
+}
+
+/* Grid de Campanhas */
+.campaigns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+.campaign-card {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.campaign-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.campaign-info {
+    padding: var(--space-md);
+    background-color: var(--color-card);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    flex-grow: 1;
+}
+
+.campaign-info h3 {
+    margin-bottom: var(--space-sm);
+    color: var(--color-purple);
+}
+
+.campaign-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+.campaign-meta span {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.campaign-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-md);
+    font-size: 0.85rem;
+}
+
+.status-badge {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-badge.active {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+}
+
+.status-badge.inactive {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.last-updated {
+    color: var(--color-text-light);
+    font-size: 0.8rem;
+}
+
+/* Grid de Fichas de Personagem */
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+.character-card {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.character-image-container {
+    position: relative;
+    height: 200px;
+}
+
+.character-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.character-quick-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-sm);
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    color: white;
+}
+
+.character-level, .character-class {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.character-info {
+    padding: var(--space-md);
+    background-color: var(--color-card);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    flex-grow: 1;
+}
+
+.character-info h3 {
+    margin-bottom: var(--space-sm);
+    color: var(--color-purple);
+}
+
+.character-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+    font-size: 0.9rem;
+}
+
+.character-meta span {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.status-badge.alive {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+}
+
+.status-badge.dead {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.status-badge.unknown {
+    background-color: rgba(158, 158, 158, 0.2);
+    color: #9E9E9E;
+}
+
+.expand-btn {
+    width: 100%;
+    margin-top: var(--space-sm);
+}
+
+/* Modal de Detalhes do Personagem */
+.character-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.character-details-header {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: center;
+}
+
+.character-details-image {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 4px solid var(--color-purple);
+}
+
+.character-details-title h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+}
+
+.character-details-meta {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.character-player {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+}
+
+.character-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.details-section h4 {
+    margin-bottom: var(--space-md);
+    color: var(--color-purple);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+}
+
+.attribute {
+    background-color: var(--color-bg);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.attribute-name {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+.attribute-value {
+    display: block;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.health-bar {
+    height: 24px;
+    background-color: var(--color-bg);
+    border-radius: var(--radius-full);
+    position: relative;
+    overflow: hidden;
+}
+
+.health-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-pink), var(--color-purple));
+    border-radius: var(--radius-full);
+}
+
+.health-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.character-bio {
+    line-height: 1.6;
+    color: var(--color-text-light);
+}
+
+.character-details-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: flex-end;
+    margin-top: var(--space-lg);
+}
+
+/* Formulários */
+.form-row {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+textarea {
+    width: 100%;
+    padding: var(--space-md);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Poppins', sans-serif;
+    resize: vertical;
+    min-height: 100px;
+}
+
+select {
+    width: 100%;
+    padding: var(--space-md);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+    }
+    
+    .character-details-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+}

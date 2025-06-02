@@ -1,35 +1,602 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campanhas - Sistema de RPG</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/themes.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body>
-    <div class="campaign-container">
-        <h1 class="construction-title">TELA DE CAMPANHAS EM CONSTRUÇÃO</h1>
-        <p>Esta área estará disponível em breve!</p>
-        <a href="/" class="btn btn-back">Voltar ao Início</a>
-    </div>
-
+    <title>Campanhas de RPG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .campaign-container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
+        /* Variáveis CSS */
+        :root {
+            /* Cores Principais (modo escuro) */
+            --color-purple: #9c27b0;
+            --color-purple-dark: #7b1fa2;
+            --color-pink: #f06292;
+            --color-pink-dark: #e91e63;
+            --color-gradient-start: #9c27b0;
+            --color-gradient-end: #f06292;
+            
+            /* Tons de Fundo (modo escuro) */
+            --color-bg: #121212;
+            --color-card: #1e1e1e;
+            --color-border: #333;
+            
+            /* Texto (modo escuro) */
+            --color-text: #f8f9fa;
+            --color-text-light: #adb5bd;
+            
+            /* Espaçamentos */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            
+            /* Bordas */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-full: 9999px;
         }
-        
-        .construction-title {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Fixo */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: var(--color-purple);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            padding: 0.5rem 0;
+            background-color: rgba(138, 43, 226, 0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-link.active {
+            background-color: var(--color-pink);
+            box-shadow: 0 4px 12px rgba(255, 20, 147, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--space-xl) var(--space-md);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding-top: 80px; /* Espaço para o header fixo */
+        }
+
+        /* Estilos específicos para a página de campanhas */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-sm);
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        /* Botões */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--color-purple), var(--color-pink));
+            color: white;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Grid de Campanhas */
+        .campaigns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .card {
+            background-color: var(--color-card);
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .campaign-card {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .campaign-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .campaign-info {
+            padding: var(--space-md);
+            flex-grow: 1;
+        }
+
+        .campaign-info h3 {
+            margin-bottom: var(--space-sm);
+            color: var(--color-purple);
+        }
+
+        .campaign-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+        }
+
+        .campaign-meta span {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .campaign-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-md);
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .status-badge.active {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .status-badge.inactive {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .last-updated {
+            color: var(--color-text-light);
+            font-size: 0.8rem;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--color-card);
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-lg);
+            color: var(--color-purple);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .close {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-text-light);
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--color-purple);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+            width: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-light);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: var(--space-md);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--color-purple);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.2);
+        }
+
+        textarea {
+            width: 100%;
+            padding: var(--space-md);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Poppins', sans-serif;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            70% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hover-grow {
+            transition: transform 0.3s;
+        }
+
+        .hover-grow:hover {
+            transform: scale(1.03);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+            }
+            
+            .campaigns-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-list {
+                gap: 0.75rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem;
+            }
         }
     </style>
+</head>
+<body>
+    <!-- Header Fixo - Correção aplicada aqui -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <i class="fas fa-dice-d20"></i> RPG Manager
+            </a>
+            <nav>
+                <ul class="nav-list">
+                    <li><a href="campanhas.html" class="nav-link active"><i class="fas fa-scroll"></i> Campanhas</a></li>
+                    <li><a href="#" class="nav-link"><i class="fas fa-users"></i> Jogadores</a></li>
+                    <li><a href="#" class="nav-link"><i class="fas fa-cog"></i> Configurações</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Suas Campanhas</h1>
+            <button class="btn btn-gradient" onclick="openCreateCampaignModal()">
+                <i class="fas fa-plus"></i> Nova Campanha
+            </button>
+        </div>
+
+        <!-- Grid de Campanhas -->
+        <div class="campaigns-grid">
+            <!-- Campanha 1 -->
+            <div class="card campaign-card hover-grow" onclick="navigateToCharacters(1)">
+                <div class="campaign-image" style="background-image: url('https://images.unsplash.com/photo-1605106702734-205df224ecce?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                <div class="campaign-info">
+                    <h3>A Maldição de Strahd</h3>
+                    <div class="campaign-meta">
+                        <span><i class="fas fa-dice"></i> D&D 5e</span>
+                        <span><i class="fas fa-users"></i> 4/6 jogadores</span>
+                    </div>
+                    <div class="campaign-status">
+                        <span class="status-badge active">Ativa</span>
+                        <span class="last-updated">Atualizada: 2 dias atrás</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campanha 2 -->
+            <div class="card campaign-card hover-grow" onclick="navigateToCharacters(2)">
+                <div class="campaign-image" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                <div class="campaign-info">
+                    <h3>Cyberpunk: Red</h3>
+                    <div class="campaign-meta">
+                        <span><i class="fas fa-dice"></i> Cyberpunk Red</span>
+                        <span><i class="fas fa-users"></i> 3/5 jogadores</span>
+                    </div>
+                    <div class="campaign-status">
+                        <span class="status-badge inactive">Inativa</span>
+                        <span class="last-updated">Atualizada: 1 semana atrás</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campanha 3 -->
+            <div class="card campaign-card hover-grow" onclick="navigateToCharacters(3)">
+                <div class="campaign-image" style="background-image: url('https://images.unsplash.com/photo-1567599753824-17d1bb5ed9fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                <div class="campaign-info">
+                    <h3>Call of Cthulhu</h3>
+                    <div class="campaign-meta">
+                        <span><i class="fas fa-dice"></i> CoC 7e</span>
+                        <span><i class="fas fa-users"></i> 5/5 jogadores</span>
+                    </div>
+                    <div class="campaign-status">
+                        <span class="status-badge active">Ativa</span>
+                        <span class="last-updated">Atualizada: ontem</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Criação de Campanha -->
+    <div class="modal" id="createCampaignModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateCampaignModal()">&times;</span>
+            <h3><i class="fas fa-scroll"></i> Criar Nova Campanha</h3>
+            
+            <form id="campaignForm">
+                <div class="form-group">
+                    <label for="campaignName">Nome da Campanha</label>
+                    <input type="text" id="campaignName" placeholder="Ex: A Maldição de Strahd" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="campaignSystem">Sistema de RPG</label>
+                    <input type="text" id="campaignSystem" placeholder="Ex: D&D 5e, Cyberpunk Red" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="campaignImage">URL da Imagem (opcional)</label>
+                    <input type="text" id="campaignImage" placeholder="Cole a URL de uma imagem">
+                </div>
+                
+                <div class="form-group">
+                    <label for="campaignDescription">Descrição</label>
+                    <textarea id="campaignDescription" rows="4" placeholder="Descreva sua campanha..."></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-gradient">
+                        <i class="fas fa-save"></i> Criar Campanha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Funções para controle dos modais
+        function openCreateCampaignModal() {
+            document.getElementById('createCampaignModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCreateCampaignModal() {
+            document.getElementById('createCampaignModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateToCharacters(campaignId) {
+            // Redireciona para a página de fichas com o ID da campanha
+            window.location.href = `fichas.html?campaign=${campaignId}`;
+        }
+
+        // Fechar modal ao clicar fora
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Form submission handler
+        document.getElementById('campaignForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Aqui você enviaria os dados do formulário para o backend
+            alert('Campanha criada com sucesso!');
+            closeCreateCampaignModal();
+        });
+    </script>
 </body>
 </html>
