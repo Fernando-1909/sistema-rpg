@@ -1,15 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
-from .models import Player
-
-class PlayerInline(admin.StackedInline):
-    model = Player
-    can_delete = False
-    verbose_name_plural = 'Player'
+from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
-    inlines = (PlayerInline,)
+    # Adiciona o campo de imagem na parte dos dados pessoais
+    fieldsets = UserAdmin.fieldsets + (
+        ('Foto de Perfil', {'fields': ('photo',)}),
+    )
 
-admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)

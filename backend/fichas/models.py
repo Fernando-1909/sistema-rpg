@@ -1,27 +1,37 @@
+import os
 from django.db import models
-from django.contrib.auth.models import User  # Importa o User padrão do Django
+from django.contrib.auth.models import AbstractUser
+from sistema_rpg.settings import MEDIA_URL
 
-class Player(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)  # Permite null/blank temporariamente
-    name = models.CharField(max_length=100)
-    photo = models.CharField(max_length=255, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+# Função para salvar as imagens na pasta desejada dentro do frontend
+def salvar_no_assets(instance, filename):
+    return os.path.join('frontend', 'assets', 'images', filename)
+
+
+# Usuário customizado com foto
+class CustomUser(AbstractUser):
+    photo = models.ImageField(upload_to=salvar_no_assets, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.username
 
 
+# Campanha do jogador
 class Campaign(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='campaigns')
-    name = models.CharField(max_length=100)
-    photo = models.CharField(max_length=255, blank=True, null=True)
+    player = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='campaigns')
+    nome = models.CharField(max_length=100) 
+    sistema = models.CharField(max_length=100)
+    imagem = models.ImageField(upload_to= '', blank=True, null=True)
+    descricao = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.nome
 
 
+# Ficha de personagem
 class CharacterSheet(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='sheets')
+    player = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sheets')
     campaign = models.ForeignKey(Campaign, on_delete=models.SET_NULL, blank=True, null=True, related_name='sheets')
     name = models.CharField(max_length=100)
     race = models.CharField(max_length=50)
@@ -40,21 +50,23 @@ class CharacterSheet(models.Model):
     opinion = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name} ({self.player.name})"
+        return f"{self.name} ({self.player.username})"
 
 
+# Bestiário da campanha
 class Bestiary(models.Model):
     name = models.CharField(max_length=100)
-    photo = models.CharField(max_length=255, blank=True, null=True)
+    photo = models.ImageField(upload_to=salvar_no_assets, blank=True, null=True)
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='bestiaries')
 
     def __str__(self):
         return self.name
 
 
+# Monstro do bestiário
 class Monster(models.Model):
     name = models.CharField(max_length=100)
-    photo = models.CharField(max_length=255, blank=True, null=True)
+    photo = models.ImageField(upload_to=salvar_no_assets, blank=True, null=True)
     classification = models.CharField(max_length=50, blank=True, null=True)
     bestiary = models.ForeignKey(Bestiary, on_delete=models.CASCADE, related_name='monsters')
 

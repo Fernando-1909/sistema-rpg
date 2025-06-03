@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'sistema_rpg',
 ]
 
+AUTH_USER_MODEL = 'fichas.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -53,7 +54,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sistema_rpg.wsgi.application'
 
-# Banco de dados - configure o seu aqui
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -65,7 +65,6 @@ DATABASES = {
     }
 }
 
-# Senha e validação - padrão
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -81,6 +80,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'America/Sao_Paulo'
@@ -89,12 +89,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Configuração de arquivos estáticos
 STATIC_URL = '/static/'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = '/campanhas/'
 LOGOUT_REDIRECT_URL = '/login/'
 
@@ -103,5 +100,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '../frontend/js'),
     os.path.join(BASE_DIR, '../frontend/assets'),
 ]
+
+MEDIA_URL = '/assets/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'frontend', 'assets', 'images')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
