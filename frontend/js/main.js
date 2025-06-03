@@ -57,27 +57,47 @@ function checkContrastIssues() {
     });
 }
 
-// Função para registrar usuário
-async function registerUser(formData) {
-    try {
-        const response = await fetch('/registrar_usuario/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('campaignForm');
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('nome', form.querySelector('#campaignName').value);
+      formData.append('sistema', form.querySelector('#campaignSystem').value);
+      formData.append('descricao', form.querySelector('#campaignDescription').value);
+
+      const imagemInput = form.querySelector('#campaignImage');
+      if (imagemInput.files.length > 0) {
+          formData.append('imagem', imagemInput.files[0]);
+      }
+
+      try {
+        const response = await fetch('/campanhas/criar/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            // NÃO colocar Content-Type, o navegador cuida disso!
+          }
         });
-        
-        const data = await handleApiResponse(response);
-        
-        showToast('Cadastro realizado com sucesso!', 'success');
-        setTimeout(() => window.location.href = '/campanhas', 1500);
-        
-        return data;
-    } catch (error) {
-        console.error('Erro no cadastro:', error);
-        // O toast já foi mostrado pela handleApiResponse
-        throw error;
-    }
-}
+
+        if (response.ok) {
+          showToast('Campanha criada com sucesso!', 'success');
+          closeCreateCampaignModal();
+          carregarCampanhas();
+          form.reset();
+        } else {
+          const errorText = await response.text();
+          showToast('Erro ao criar campanha: ' + errorText, 'error');
+        }
+      } catch (error) {
+        console.error('Erro na criação da campanha:', error);
+        showToast('Erro de conexão com o servidor.', 'error');
+      }
+    });
+  }
+});
+
