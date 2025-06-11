@@ -107,3 +107,4 @@ def criar_campanha(request):
 @csrf_exempt
 @login_required
 def character_sheet(request):
+    print("View character_sheet acessada. Método:", request.method)
