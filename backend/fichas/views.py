@@ -103,3 +103,7 @@ def criar_campanha(request):
         return JsonResponse({'success': True})
 
     return HttpResponseBadRequest("Método não permitido.")
+
+@csrf_exempt
+@login_required
+def character_sheet(request):
