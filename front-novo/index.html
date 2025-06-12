@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de RPG Editável</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="character-sheet">
+        <div class="sheet-header">
+            <div class="character-photo">
+                <div class="photo-placeholder">
+                    <span>Clique para adicionar foto</span>
+                    <input type="file" id="character-photo-upload" accept="image/*">
+                </div>
+                <img id="character-photo-preview" src="" alt="Foto do Personagem" style="display: none;">
+            </div>
+            
+            <div class="character-info">
+                <div class="form-group">
+                    <label for="character-name">Nome:</label>
+                    <input type="text" id="character-name" class="editable" value="Aragorn">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="character-race">Raça:</label>
+                        <input type="text" id="character-race" class="editable" value="Humano">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-class">Classe:</label>
+                        <input type="text" id="character-class" class="editable" value="Guerreiro">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="character-weapon">Arma:</label>
+                        <input type="text" id="character-weapon" class="editable" value="Espada Longa">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-element">Elemento:</label>
+                        <input type="text" id="character-element" class="editable" value="Terra">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="character-stats">
+                <div class="stat-bar">
+                    <label>VIDA</label>
+                    <div class="bar-container">
+                        <div class="bar-controls">
+                            <button class="arrow-btn minus" data-target="hp-value">-</button>
+                            <div class="bar-value" id="hp-value">40 / 40</div>
+                            <button class="arrow-btn plus" data-target="hp-value">+</button>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill hp-fill" id="hp-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-bar">
+                    <label>ENERGIA</label>
+                    <div class="bar-container">
+                        <div class="bar-controls">
+                            <button class="arrow-btn minus" data-target="energy-value">-</button>
+                            <div class="bar-value" id="energy-value">2 / 5</div>
+                            <button class="arrow-btn plus" data-target="energy-value">+</button>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill energy-fill" id="energy-bar" style="width: 40%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet-section">
+            <h3>Atributos</h3>
+            <div class="attributes-grid">
+                <div class="attribute">
+                    <label for="attr-for">Força</label>
+                    <input type="text" id="attr-for" class="editable" value="16">
+                </div>
+                <div class="attribute">
+                    <label for="attr-vit">Vitalidade</label>
+                    <input type="text" id="attr-vit" class="editable" value="14">
+                </div>
+                <div class="attribute">
+                    <label for="attr-agi">Agilidade</label>
+                    <input type="text" id="attr-agi" class="editable" value="12">
+                </div>
+                <div class="attribute">
+                    <label for="attr-cha">Carisma</label>
+                    <input type="text" id="attr-cha" class="editable" value="10">
+                </div>
+                <div class="attribute">
+                    <label for="attr-int">Inteligência</label>
+                    <input type="text" id="attr-int" class="editable" value="8">
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet-section">
+            <h3>Perícias</h3>
+            <div class="skills-list">
+                <div class="skill">
+                    <label for="skill-1">Nome da perícia</label>
+                    <input type="text" id="skill-1" class="editable" value="Lutar com espadas">
+                    <input type="text" class="skill-value editable" value="+5">
+                </div>
+                <div class="skill">
+                    <label for="skill-2">Nome da perícia</label>
+                    <input type="text" id="skill-2" class="editable" value="Esquiva">
+                    <input type="text" class="skill-value editable" value="+3">
+                </div>
+                <button id="add-skill" class="btn btn-sm btn-purple">+ Adicionar Perícia</button>
+            </div>
+        </div>
+
+        <div class="sheet-section">
+            <h3>Ataques</h3>
+            <div class="attacks-list">
+                <div class="attack">
+                    <div class="attack-name">
+                        <label for="attack-1">Nome do ataque</label>
+                        <input type="text" id="attack-1" class="editable" value="Golpe Poderoso">
+                    </div>
+                    <div class="attack-details">
+                        <div class="form-group">
+                            <label for="attack-1-dmg">Dano</label>
+                            <input type="text" id="attack-1-dmg" class="editable" value="2d6+4">
+                        </div>
+                        <div class="form-group">
+                            <label for="attack-1-type">Tipo</label>
+                            <input type="text" id="attack-1-type" class="editable" value="Corte">
+                        </div>
+                    </div>
+                    <div class="attack-desc">
+                        <label for="attack-1-desc">Descrição</label>
+                        <textarea id="attack-1-desc" class="editable">Um golpe poderoso que causa dano extra</textarea>
+                    </div>
+                </div>
+                <button id="add-attack" class="btn btn-sm btn-purple">+ Adicionar Ataque</button>
+            </div>
+        </div>
+
+        <div class="sheet-actions">
+            <button id="save-sheet" class="btn btn-gradient">Salvar Ficha</button>
+            <button id="reset-sheet" class="btn btn-pink">Resetar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
