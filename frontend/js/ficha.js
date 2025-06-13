@@ -352,6 +352,9 @@ window.addEventListener('beforeunload', function() {
     updateBar('energy-value');
 });
 
+// Parte Fernando, a parte superior possivelmente será alterada
+// NÃO MODIFICAR O QUE ESTÁ ABAIXO DESTE COMENTÁRIO!!! 
+
 document.addEventListener('DOMContentLoaded', function() {
     const energyBar = document.getElementById('energy-bar');
     if (energyBar) {
@@ -393,6 +396,8 @@ function abrirModalFicha(button) {
         hp, velocidade, energia, campanha, anotacoes, pericias, foto, id: fichaId
     } = button.dataset;
 
+
+    // Passar essa parte para o código html para facilitar a organização !!!!!!! //
     // Constrói o HTML do modal
     conteudo.innerHTML = `
         <div class="ficha-detalhes-container">
