@@ -1,17 +1,15 @@
 # fichas/views.py
 
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login as auth_login
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import get_user_model
-from .models import Campaign
+from .models import Campaign, CharacterSheet
 import json
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404
 
-User = get_user_model()  # pega seu CustomUser
+User = get_user_model()  # pega CustomUser
 
 def home(request):
     return render(request, 'index.html')
@@ -104,7 +102,114 @@ def criar_campanha(request):
 
     return HttpResponseBadRequest("Método não permitido.")
 
-@csrf_exempt
 @login_required
-def character_sheet(request):
-    print("View character_sheet acessada. Método:", request.method)
+def listar_fichas(request, campaign_id=None):
+    if request.user.is_superuser:
+        fichas = CharacterSheet.objects.filter(campaign_id=campaign_id) if campaign_id else CharacterSheet.objects.all()
+        campanhas = Campaign.objects.all()
+    else:
+        fichas = CharacterSheet.objects.filter(player=request.user, campaign_id=campaign_id) if campaign_id else CharacterSheet.objects.filter(player=request.user)
+        campanhas = Campaign.objects.all()
+
+    return render(request, 'fichas.html', {
+        'fichas': fichas,
+        'campanhas': campanhas
+    })
+
+@login_required
+def visualizar_ficha(request, ficha_id):
+    if request.user.is_superuser:
+        ficha = get_object_or_404(CharacterSheet, id=ficha_id)
+    else:
+        ficha = get_object_or_404(CharacterSheet, id=ficha_id, player=request.user)
+
+    skills = []
+    if ficha.skills:
+        try:
+            skills = eval(ficha.skills)  # cuidado com eval, só use se os dados forem confiáveis!
+        except:
+            skills = [{'name': ficha.skills, 'value': ''}]
+
+    context = {
+        'ficha': ficha,
+        'skills': skills,
+        'campanhas': Campaign.objects.all(),
+        'is_admin': request.user.is_superuser,
+        'pode_editar': request.user.is_superuser or ficha.player == request.user
+    }
+    return render(request, 'ficha_detalhes.html', context)
+
+@login_required
+def criar_ficha(request):
+    if request.method == 'POST':
+        try:
+            ficha = CharacterSheet(
+                player=request.user,
+                name=request.POST.get('name'),
+                race=request.POST.get('race'),
+                char_class=request.POST.get('char_class'),
+                weapon=request.POST.get('weapon'),
+                element=request.POST.get('element'),
+                strength=request.POST.get('strength'),
+                vitality=request.POST.get('vitality'),
+                agility=request.POST.get('agility'),
+                charisma=request.POST.get('charisma'),
+                intelligence=request.POST.get('intelligence'),
+                hp=request.POST.get('hp'),
+                speed=request.POST.get('speed'),
+                energy=request.POST.get('energy'),
+                opinion=request.POST.get('opinion'),
+                skills=request.POST.get('skills'),
+                photo=request.FILES.get('photo') 
+            )
+
+            campaign_id = request.POST.get('campaign_id')
+            if campaign_id:
+                try:
+                    ficha.campaign = Campaign.objects.get(id=int(campaign_id))
+                except (Campaign.DoesNotExist, ValueError):
+                    ficha.campaign = None  # evita crash e deixa sem campanha
+
+
+            ficha.save()
+
+            return redirect('listar_fichas', campaign_id=ficha.campaign.id if ficha.campaign else 0)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    return HttpResponseBadRequest('Método não permitido')
+
+@login_required
+def editar_ficha(request, ficha_id):
+    if request.method == 'POST':
+        ficha = get_object_or_404(CharacterSheet, id=ficha_id)
+        if not (request.user.is_superuser or ficha.player == request.user):
+            return JsonResponse({'success': False, 'error': 'Sem permissão'}, status=403)
+
+        try:
+            ficha.name = request.POST.get('name', ficha.name)
+            ficha.race = request.POST.get('race', ficha.race)
+            ficha.char_class = request.POST.get('char_class', ficha.char_class)
+            ficha.weapon = request.POST.get('weapon', ficha.weapon)
+            ficha.element = request.POST.get('element', ficha.element)
+            ficha.strength = request.POST.get('strength', ficha.strength)
+            ficha.vitality = request.POST.get('vitality', ficha.vitality)
+            ficha.agility = request.POST.get('agility', ficha.agility)
+            ficha.charisma = request.POST.get('charisma', ficha.charisma)
+            ficha.intelligence = request.POST.get('intelligence', ficha.intelligence)
+            ficha.hp = request.POST.get('hp', ficha.hp)
+            ficha.speed = request.POST.get('speed', ficha.speed)
+            ficha.energy = request.POST.get('energy', ficha.energy)
+            ficha.opinion = request.POST.get('opinion', ficha.opinion)
+            ficha.skills = request.POST.get('skills', ficha.skills)
+
+            campaign_id = request.POST.get('campaign_id')
+            if campaign_id:
+                ficha.campaign = Campaign.objects.get(id=campaign_id, player=request.user)
+
+            ficha.save()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    return HttpResponseBadRequest('Método não permitido')

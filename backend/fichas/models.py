@@ -48,6 +48,7 @@ class CharacterSheet(models.Model):
     speed = models.IntegerField(blank=True, null=True)
     energy = models.IntegerField(blank=True, null=True)
     opinion = models.TextField(blank=True, null=True)
+    photo = models.ImageField(upload_to='assets/images/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.player.username})"

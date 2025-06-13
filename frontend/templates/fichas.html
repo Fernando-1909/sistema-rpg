@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de RPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/fichas.css" />
+    <script src="/js/ficha.js" defer></script>
+</head>
+<body>
+    <div class="back-btn-container">
+        <a href="{% url 'campanhas' %}" class="btn btn-pink">Voltar</a>
+    </div>
+
+    <div class="create-sheet-btn-container">
+        <button id="create-sheet-btn" class="btn btn-primary">Criar Ficha</button>
+    </div>
+
+    <!-- Lista de fichas -->
+    <section class="fichas-lista">
+        {% if fichas %}
+            {% for ficha in fichas %}
+                <div class="ficha-card">
+                    {% if ficha.photo %}
+                        <img src="{{ ficha.photo.url }}" alt="Foto de {{ ficha.name }}" class="ficha-foto">
+                    {% endif %}
+                    <h3>{{ ficha.name }}</h3>
+                    <p><strong>Raça:</strong> {{ ficha.race }}</p>
+                    <p><strong>Classe:</strong> {{ ficha.char_class }}</p>
+                    <p><strong>Campanha:</strong> 
+                        {% if ficha.campaign %}
+                            {{ ficha.campaign.nome }}
+                        {% else %}
+                            Nenhuma
+                        {% endif %}
+                    </p>
+                    <button class="btn btn-gradient" onclick="abrirModalFicha('{{ ficha.id }}')">Ver Detalhes</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="sem-fichas">Sem fichas ainda, que tal criar uma? (｡•́︿•̀｡)</p>
+        {% endif %}
+    </section>
+
+    <!-- Modal Criar Ficha -->
+    <div id="create-sheet-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Criar Nova Ficha</h2>
+            <form id="new-sheet-form" method="POST" action="{% url 'criar_ficha' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="new-character-name">Nome*:</label>
+                    <input type="text" id="new-character-name" name="name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-character-race">Raça*:</label>
+                        <input type="text" id="new-character-race" name="race" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-character-class">Classe*:</label>
+                        <input type="text" id="new-character-class" name="char_class" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-character-weapon">Arma:</label>
+                        <input type="text" id="new-character-weapon" name="weapon">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-character-element">Elemento:</label>
+                        <input type="text" id="new-character-element" name="element">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-character-strength">Força:</label>
+                        <input type="number" id="new-character-strength" name="strength">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-character-vitality">Vitalidade:</label>
+                        <input type="number" id="new-character-vitality" name="vitality">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-character-agility">Agilidade:</label>
+                        <input type="number" id="new-character-agility" name="agility">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-character-charisma">Carisma:</label>
+                        <input type="number" id="new-character-charisma" name="charisma">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-character-intelligence">Inteligência:</label>
+                        <input type="number" id="new-character-intelligence" name="intelligence">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-character-hp">HP:</label>
+                        <input type="number" id="new-character-hp" name="hp">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-character-speed">Velocidade:</label>
+                        <input type="number" id="new-character-speed" name="speed">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-character-energy">Energia:</label>
+                        <input type="number" id="new-character-energy" name="energy">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaign">Campanha</label>
+                    <p>Total de campanhas encontradas: {{ campanhas|length }}</p>
+                    <select id="campaign" name="campaign_id" class="form-control">
+                    <option value="">-- Nenhuma campanha --</option>
+                    {% for campanha in campanhas %}
+                        <option value="{{ campanha.id }}">{{ campanha.nome }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-character-opinion">Anotações:</label>
+                    <textarea id="new-character-opinion" name="opinion" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-character-skills">Perícias:</label>
+                    <textarea id="new-character-skills" name="skills" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-character-photo">Foto do personagem:</label>
+                    <input type="file" id="new-character-photo" name="photo" accept="image/*">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-gradient">Criar Ficha</button>
+                    <button type="button" class="btn btn-pink close-modal">Cancelar</button>
+                </div>
+                <p class="form-note">* Campos obrigatórios</p>
+            </form>
+        </div>
+    </div>
+
+    </div>
+</body>
+</html>
