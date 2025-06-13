@@ -645,7 +645,7 @@ body {
 
 /* Estilos para o modal */
 .modal {
-    display: none;
+    display: none; 
     position: fixed;
     top: 0;
     left: 0;
@@ -930,4 +930,13 @@ input:focus, textarea:focus, select:focus {
 }
 .modal-content::-webkit-scrollbar-track {
   background: #222;
+}
+
+.alert-success {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
 }

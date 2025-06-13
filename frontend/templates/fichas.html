@@ -6,9 +6,43 @@
     <title>Ficha de RPG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/fichas.css" />
+    <link rel="stylesheet" href="/css/view-fichas.css" />
     <script src="/js/ficha.js" defer></script>
 </head>
 <body>
+    <!-- Script para auto-abrir o modal de edição -->
+    {% if editar_mode %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('create-sheet-modal');
+        modal.classList.remove('hidden');
+        
+        // Preenche os campos do formulário
+        document.getElementById('new-character-name').value = "{{ ficha_edit.name|escapejs }}";
+        document.getElementById('new-character-race').value = "{{ ficha_edit.race|escapejs }}";
+        document.getElementById('new-character-class').value = "{{ ficha_edit.char_class|escapejs }}";
+        document.getElementById('new-character-weapon').value = "{{ ficha_edit.weapon|escapejs }}";
+        document.getElementById('new-character-element').value = "{{ ficha_edit.element|escapejs }}";
+        document.getElementById('new-character-strength').value = "{{ ficha_edit.strength|default:0 }}";
+        document.getElementById('new-character-vitality').value = "{{ ficha_edit.vitality|default:0 }}";
+        document.getElementById('new-character-agility').value = "{{ ficha_edit.agility|default:0 }}";
+        document.getElementById('new-character-charisma').value = "{{ ficha_edit.charisma|default:0 }}";
+        document.getElementById('new-character-intelligence').value = "{{ ficha_edit.intelligence|default:0 }}";
+        document.getElementById('new-character-hp').value = "{{ ficha_edit.hp|default:0 }}";
+        document.getElementById('new-character-speed').value = "{{ ficha_edit.speed|default:0 }}";
+        document.getElementById('new-character-energy').value = "{{ ficha_edit.energy|default:0 }}";
+        document.getElementById('new-character-opinion').value = "{{ ficha_edit.opinion|escapejs }}";
+        document.getElementById('new-character-skills').value = "{{ ficha_edit.skills|escapejs }}";
+        
+        // Configura a campanha no select
+        const campaignSelect = document.getElementById('campaign');
+        if (campaignSelect && "{{ ficha_edit.campaign.id|default:'' }}") {
+            campaignSelect.value = "{{ ficha_edit.campaign.id }}";
+        }
+    });
+    </script>
+    {% endif %}
+
     <div class="back-btn-container">
         <a href="{% url 'campanhas' %}" class="btn btn-pink">Voltar</a>
     </div>
@@ -35,7 +69,29 @@
                             Nenhuma
                         {% endif %}
                     </p>
-                    <button class="btn btn-gradient" onclick="abrirModalFicha('{{ ficha.id }}')">Ver Detalhes</button>
+                    <button class="btn btn-gradient" 
+                        onclick="abrirModalFicha(this)"
+                        data-id="{{ ficha.id }}"
+                        data-nome="{{ ficha.name }}"
+                        data-raca="{{ ficha.race }}"
+                        data-classe="{{ ficha.char_class }}"
+                        data-arma="{{ ficha.weapon|default:'-' }}"
+                        data-elemento="{{ ficha.element|default:'-' }}"
+                        data-forca="{{ ficha.strength|default:'-' }}"
+                        data-vitalidade="{{ ficha.vitality|default:'-' }}"
+                        data-agilidade="{{ ficha.agility|default:'-' }}"
+                        data-carisma="{{ ficha.charisma|default:'-' }}"
+                        data-inteligencia="{{ ficha.intelligence|default:'-' }}"
+                        data-hp="{{ ficha.hp|default:'-' }}"
+                        data-velocidade="{{ ficha.speed|default:'-' }}"
+                        data-energia="{{ ficha.energy|default:'-' }}"
+                        data-campanha="{{ ficha.campaign.nome|default:'Nenhuma' }}"
+                        data-anotacoes="{{ ficha.opinion|default:'-' }}"
+                        data-pericias="{{ ficha.skills|default:'-' }}"
+                        data-foto="{{ ficha.photo.url|default:'' }}">
+                    Ver Detalhes
+                </button>
+
                 </div>
             {% endfor %}
         {% else %}
@@ -149,7 +205,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-gradient">Criar Ficha</button>
+                    <button type="submit" class="btn btn-gradient">Salvar Ficha</button>
                     <button type="button" class="btn btn-pink close-modal">Cancelar</button>
                 </div>
                 <p class="form-note">* Campos obrigatórios</p>
@@ -157,6 +213,18 @@
         </div>
     </div>
 
+    <!-- Modal Detalhes da Ficha -->
+    <div id="detalhes-ficha-modal" class="modal hidden">
+        <div class="modal-content ficha-detalhes-modal">
+            <span class="close-modal" onclick="fecharModalFicha()">&times;</span>
+            <h2>Detalhes da Ficha</h2>
+            <div id="ficha-detalhes-content">
+                <!-- Conteúdo será preenchido pelo JavaScript -->
+            </div>
+        </div>
     </div>
+    
+
+
 </body>
 </html>
