@@ -234,6 +234,42 @@
         </div>
     </div>
     
+    <!-- Modal Calculadora de Dano -->
+    <div id="calculadora-dano-modal" class="modal hidden">
+    <div class="modal-content ficha-detalhes-modal">
+        <span class="close-modal" onclick="fecharCalculadoraDano()">&times;</span>
+        
+        <h2 class="modal-title">Calculadora de Dano</h2>
+        
+        <div id="calculadora-dano-content">
+        <p class="formula-info">
+            <strong>Fórmula:</strong>
+            <code>(Força + Dano Base) × (1 + Chance Crítica) + Dado (1d20)</code>
+        </p>
+
+        <div class="form-group">
+            <label for="dano-base">Dano base da arma:</label>
+            <input type="number" id="dano-base" placeholder="Ex: 10" class="input-dano">
+        </div>
+
+        <div class="form-group">
+            <label for="chance-critico">Chance de crítico (ex: 0.25):</label>
+            <input type="number" id="chance-critico" step="0.01" max="1.01" placeholder="Máx: 1.01" class="input-critico">
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-gradient" onclick="calcularDano()">
+            <i class="fas fa-dice-d20"></i> Calcular Dano
+            </button>
+            <button class="btn btn-pink" onclick="fecharCalculadoraDano()">
+            <i class="fas fa-times"></i> Cancelar
+            </button>
+        </div>
+
+        <div id="resultado-dano" class="resultado-dano"></div>
+        </div>
+    </div>
+    </div>
 
 
 </body>

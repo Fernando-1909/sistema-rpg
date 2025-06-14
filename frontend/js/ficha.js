@@ -425,27 +425,28 @@ function abrirModalFicha(button) {
         </div>
         </div>
 
-
-
-
+        <div class="ficha-detalhes-section">
+        <h3>Perícias</h3>
+        <p>${pericias}</p>
+        </div>
+        
         <div class="ficha-detalhes-section">
         <h3>Anotações</h3>
         <p>${anotacoes}</p>
         </div>
 
-        <div class="ficha-detalhes-section">
-        <h3>Perícias</h3>
-        <p>${pericias}</p>
+        <div class="modal-buttons">
+            <button onclick="editarFicha(${fichaId})" class="btn btn-gradient">
+                <i class="fas fa-edit"></i> Editar
+            </button>
+            <button onclick="confirmarDelecao(${fichaId})" class="btn btn-pink">
+                <i class="fas fa-trash"></i> Deletar
+            </button>
+            <button onclick="abrirCalculadoraDano(${fichaId})" class="btn btn-purple">
+                <i class="fas fa-calculator"></i> Calculadora de Dano
+            </button>
         </div>
 
-        <div class="modal-buttons">
-        <button onclick="editarFicha(${fichaId})" class="btn btn-gradient">
-            <i class="fas fa-edit"></i> Editar
-        </button>
-        <button onclick="confirmarDelecao(${fichaId})" class="btn btn-pink">
-            <i class="fas fa-trash"></i> Deletar
-        </button>
-        </div>
     </div>
     `;
     // Controle das barras (dentro do modal)
@@ -570,22 +571,7 @@ function editarFicha(fichaId) {
         document.getElementById('new-character-skills').value = button.dataset.pericias || '';
     }
     
-     // Atualiza o action do formulário
-    const form = document.getElementById('new-sheet-form');
-    form.action = `/fichas/editar/${fichaId}/`;
-    
-    // Adiciona campo hidden com o ID
-    let idInput = document.querySelector('input[name="ficha_id"]');
-    if (!idInput) {
-        idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'ficha_id';
-        newSheetForm.appendChild(idInput);
-    }
-    idInput.value = fichaId;
-    
-    // Abre o modal
-    editModal.classList.remove('hidden');
+     
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -692,3 +678,79 @@ window.addEventListener('load', function() {
         localStorage.removeItem('fecharModal');
     }
 });
+
+// Inicializa fichasData pegando os dados dos botões "Ver detalhes" no HTML
+const fichasData = Array.from(document.querySelectorAll('.ver-detalhes')).map(button => ({
+  id: parseInt(button.dataset.id),
+  nome: button.dataset.nome,
+  raca: button.dataset.raca,
+  classe: button.dataset.classe,
+  arma: button.dataset.arma,
+  elemento: button.dataset.elemento,
+  forca: parseInt(button.dataset.forca) || 0,
+  vitalidade: parseInt(button.dataset.vitalidade) || 0,
+  agilidade: parseInt(button.dataset.agilidade) || 0,
+  carisma: parseInt(button.dataset.carisma) || 0,
+  inteligencia: parseInt(button.dataset.inteligencia) || 0,
+  hp: parseInt(button.dataset.hp) || 0,
+  velocidade: parseInt(button.dataset.velocidade) || 0,
+  energia: parseInt(button.dataset.energia) || 0,
+  campanha: button.dataset.campanha,
+  anotacoes: button.dataset.anotacoes,
+  pericias: button.dataset.pericias,
+  foto: button.dataset.foto
+}));
+
+let fichaSelecionada = null;
+
+function abrirCalculadoraDano(fichaId) {
+    fichaSelecionada = fichasData.find(f => f.id === fichaId);
+    if (!fichaSelecionada) {
+        alert("Ficha não encontrada.");
+        return;
+    }
+
+    fecharModalFicha(); // Fecha o modal atual (modal de detalhes)
+
+    // Abre o modal da calculadora
+    const modal = document.getElementById("calculadora-dano-modal");
+    modal.classList.remove("hidden");
+
+    // Reseta os inputs e resultado da calculadora
+    document.getElementById("dano-base").value = "";
+    document.getElementById("chance-critico").value = "";
+    document.getElementById("resultado-dano").innerHTML = "";
+}
+
+function fecharCalculadoraDano() {
+    document.getElementById("calculadora-dano-modal").classList.add("hidden");
+}
+
+function calcularDano() {
+    const danoBase = parseFloat(document.getElementById("dano-base").value);
+    const critico = parseFloat(document.getElementById("chance-critico").value);
+
+    if (isNaN(danoBase) || isNaN(critico) || critico > 1.01 || critico < 0) {
+        alert("Insira valores válidos. Chance crítica deve estar entre 0 e 1.01");
+        return;
+    }
+
+    if (!fichaSelecionada) {
+      alert("Nenhuma ficha selecionada para calcular dano.");
+      return;
+    }
+
+    const dado = Math.floor(Math.random() * 20) + 1;
+    const forca = parseInt(fichaSelecionada.forca || 0);
+
+    const dano = (forca + danoBase) * (1 + critico) + dado;
+
+    document.getElementById("resultado-dano").innerHTML = `
+        <p><strong>Força:</strong> ${forca}</p>
+        <p><strong>Dano base:</strong> ${danoBase}</p>
+        <p><strong>Chance crítica:</strong> ${critico}</p>
+        <p><strong>Valor do dado (1d20):</strong> ${dado}</p>
+        <p><strong><u>Dano total:</u></strong> ${dano.toFixed(2)}</p>
+    `;
+}
+
