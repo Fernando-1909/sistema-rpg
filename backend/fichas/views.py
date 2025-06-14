@@ -104,16 +104,123 @@ def criar_campanha(request):
 
 @login_required
 def listar_fichas(request, campaign_id=None):
-    if request.user.is_superuser:
+    # Configurações iniciais
+    user = request.user
+    is_admin = user.is_superuser
+    
+    # Filtra as fichas
+    if is_admin:
         fichas = CharacterSheet.objects.filter(campaign_id=campaign_id) if campaign_id else CharacterSheet.objects.all()
-        campanhas = Campaign.objects.all()
     else:
-        fichas = CharacterSheet.objects.filter(player=request.user, campaign_id=campaign_id) if campaign_id else CharacterSheet.objects.filter(player=request.user)
-        campanhas = Campaign.objects.all()
+        fichas = CharacterSheet.objects.filter(player=user)
+        if campaign_id:
+            fichas = fichas.filter(campaign_id=campaign_id)
+    
+    campanhas = Campaign.objects.all()
+
+    # Verifica se é uma requisição DELETE
+    if request.method == 'DELETE':
+        try:
+            data = json.loads(request.body)
+            ficha_id = data.get('ficha_id')
+            ficha = CharacterSheet.objects.get(id=ficha_id)
+            
+            # Verifica permissão - apenas admin ou o criador pode deletar
+            if not (is_admin or ficha.player == user):
+                return JsonResponse({'success': False, 'error': 'Você não tem permissão para deletar esta ficha'}, status=403)
+            
+            ficha.delete()
+            return JsonResponse({'success': True})
+        except CharacterSheet.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Ficha não encontrada'}, status=404)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    # Processa POST (criação/edição)
+    if request.method == 'POST':
+        try:
+            # Verifica se é edição
+            ficha_id = request.POST.get('ficha_id')
+            
+            if ficha_id:  # EDIÇÃO
+                ficha = CharacterSheet.objects.get(id=ficha_id)
+                
+                # Verifica permissão
+                if not is_admin and ficha.player != user:
+                    return HttpResponseForbidden("Sem permissão")
+                
+                # Atualiza TODOS os campos (incluindo os inteiros)
+                ficha.name = request.POST.get('name', ficha.name)
+                ficha.race = request.POST.get('race', ficha.race)
+                ficha.char_class = request.POST.get('char_class', ficha.char_class)
+                ficha.weapon = request.POST.get('weapon', ficha.weapon)
+                ficha.element = request.POST.get('element', ficha.element)
+                
+                # Campos numéricos (convertendo para int)
+                ficha.strength = int(request.POST.get('strength', ficha.strength))
+                ficha.vitality = int(request.POST.get('vitality', ficha.vitality))
+                ficha.agility = int(request.POST.get('agility', ficha.agility))
+                ficha.charisma = int(request.POST.get('charisma', ficha.charisma))
+                ficha.intelligence = int(request.POST.get('intelligence', ficha.intelligence))
+                ficha.hp = int(request.POST.get('hp', ficha.hp))
+                ficha.speed = int(request.POST.get('speed', ficha.speed))
+                ficha.energy = int(request.POST.get('energy', ficha.energy))
+                
+                ficha.opinion = request.POST.get('opinion', ficha.opinion)
+                ficha.skills = request.POST.get('skills', ficha.skills)
+                
+                # Foto (se enviada)
+                if 'photo' in request.FILES:
+                    ficha.photo = request.FILES['photo']
+                
+                ficha.save()
+                return redirect('listar_fichas', campaign_id=campaign_id)
+                
+            else:  # CRIAÇÃO
+                ficha = CharacterSheet(
+                    player=user,
+                    name=request.POST.get('name'),
+                    race=request.POST.get('race'),
+                    char_class=request.POST.get('char_class'),
+                    weapon=request.POST.get('weapon'),
+                    element=request.POST.get('element'),
+                    
+                    # Campos numéricos (convertendo para int)
+                    strength=int(request.POST.get('strength', 0)),
+                    vitality=int(request.POST.get('vitality', 0)),
+                    agility=int(request.POST.get('agility', 0)),
+                    charisma=int(request.POST.get('charisma', 0)),
+                    intelligence=int(request.POST.get('intelligence', 0)),
+                    hp=int(request.POST.get('hp', 0)),
+                    speed=int(request.POST.get('speed', 0)),
+                    energy=int(request.POST.get('energy', 0)),
+                    
+                    opinion=request.POST.get('opinion', ''),
+                    skills=request.POST.get('skills', ''),
+                )
+                
+                if 'photo' in request.FILES:
+                    ficha.photo = request.FILES['photo']
+                
+                # Associa à campanha se houver
+                if campaign_id:
+                    ficha.campaign = Campaign.objects.get(id=campaign_id)
+                
+                ficha.save()
+                return redirect('listar_fichas', campaign_id=campaign_id)
+            
+        except Exception as e:
+            return render(request, 'fichas.html', {
+                'fichas': fichas,
+                'campanhas': campanhas,
+                'current_campaign': campaign_id,
+                'error': f"Erro: {str(e)}"
+            })
 
     return render(request, 'fichas.html', {
         'fichas': fichas,
-        'campanhas': campanhas
+        'campanhas': campanhas,
+        'current_campaign': campaign_id
     })
 
 @login_required

@@ -43,23 +43,29 @@
     </script>
     {% endif %}
 
-    <div class="back-btn-container">
-        <a href="{% url 'campanhas' %}" class="btn btn-pink">Voltar</a>
-    </div>
+    <header class="header">
+    <div class="header-content">
+        <div class="header-left header-buttons">
+        <a href="{% url 'campanhas' %}" class="btn btn-pink">← Voltar</a>
+        </div>
 
-    <div class="create-sheet-btn-container">
-        <button id="create-sheet-btn" class="btn btn-primary">Criar Ficha</button>
+        <h1 class="page-title">Minhas Fichas</h1>
+
+        <div class="header-right header-buttons">
+        <button id="create-sheet-btn" class="btn btn-gradient">+ Criar Ficha</button>
+        </div>
     </div>
+    </header>
 
     <!-- Lista de fichas -->
-    <section class="fichas-lista">
+    <section class="fichas-lista grid-layout">
         {% if fichas %}
             {% for ficha in fichas %}
-                <div class="ficha-card">
+                <div class="ficha-card styled-card">
                     {% if ficha.photo %}
                         <img src="{{ ficha.photo.url }}" alt="Foto de {{ ficha.name }}" class="ficha-foto">
                     {% endif %}
-                    <h3>{{ ficha.name }}</h3>
+                    <h3 class="ficha-nome">{{ ficha.name }}</h3>
                     <p><strong>Raça:</strong> {{ ficha.race }}</p>
                     <p><strong>Classe:</strong> {{ ficha.char_class }}</p>
                     <p><strong>Campanha:</strong> 
@@ -69,7 +75,7 @@
                             Nenhuma
                         {% endif %}
                     </p>
-                    <button class="btn btn-gradient" 
+                    <button class="btn btn-gradient ver-detalhes"
                         onclick="abrirModalFicha(this)"
                         data-id="{{ ficha.id }}"
                         data-nome="{{ ficha.name }}"
@@ -89,9 +95,8 @@
                         data-anotacoes="{{ ficha.opinion|default:'-' }}"
                         data-pericias="{{ ficha.skills|default:'-' }}"
                         data-foto="{{ ficha.photo.url|default:'' }}">
-                    Ver Detalhes
-                </button>
-
+                        Ver Detalhes
+                    </button>
                 </div>
             {% endfor %}
         {% else %}
@@ -99,12 +104,17 @@
         {% endif %}
     </section>
 
+
     <!-- Modal Criar Ficha -->
     <div id="create-sheet-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Criar Nova Ficha</h2>
-            <form id="new-sheet-form" method="POST" action="{% url 'criar_ficha' %}" enctype="multipart/form-data">
+            <form id="new-sheet-form" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                {% if editar_mode %}
+                    <input type="hidden" name="ficha_id" value="{{ ficha_edit.id }}">
+                {% endif %}
                 {% csrf_token %}
 
                 <div class="form-group">

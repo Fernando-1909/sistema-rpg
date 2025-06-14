@@ -940,3 +940,301 @@ input:focus, textarea:focus, select:focus {
     border-radius: 4px;
     text-align: center;
 }
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.styled-card {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.styled-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(156, 39, 176, 0.4);
+}
+
+.ficha-card h3.ficha-nome {
+    font-size: 1.4rem;
+    color: var(--color-purple);
+    margin: 1rem 0 0.5rem;
+}
+
+.ficha-card p {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.ver-detalhes {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.ficha-foto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    margin-bottom: 1rem;
+}
+
+.status-bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.bar-section {
+  width: 100%;
+}
+
+.bar-label {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+/* Cores distintas para os rótulos */
+.bar-section:nth-child(1) .bar-label {
+  color: #ff4444; /* Vermelho para HP */
+}
+
+.bar-section:nth-child(2) .bar-label {
+  color: #448aff; /* Azul para Energia */
+}
+
+
+.bar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  justify-content: center;
+}
+
+.ficha-detalhes-grid-lindo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.detalhes-coluna-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.info-item {
+  background-color: var(--color-card);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--color-text);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.detalhes-coluna-atributos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.atributo-tag {
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: bold;
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.atributo-tag {
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  text-shadow: none;
+  box-shadow: none;
+  background: none;
+  padding: 0.3rem 0;
+}
+
+/* CORES DE TEXTO INDIVIDUAIS (somente a fonte colorida!) */
+.atributo-tag.forca        { color: #f44336; } /* vermelho */
+.atributo-tag.vitalidade   { color: #4caf50; } /* verde */
+.atributo-tag.agilidade    { color: #2196f3; } /* azul */
+.atributo-tag.carisma      { color: #e91e63; } /* rosa */
+.atributo-tag.inteligencia { color: #9c27b0; } /* roxo */
+.atributo-tag.velocidade   { color: #ff9800; } /* laranja */
+
+/* === HEADER FIXO ROXO COM TÍTULO CENTRAL === */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--color-purple);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+}
+
+.header.scrolled {
+    padding: 0.5rem 0;
+    background-color: rgba(138, 43, 226, 0.95);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+/* Layout do conteúdo: título no centro, botões nas pontas */
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+/* Título centralizado com fonte menor */
+.page-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #fff;
+    grid-column: 2; /* centralizado */
+}
+
+/* Botões à esquerda e direita */
+.header-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.header-left{
+    display: flex;
+    align-items: center;
+
+}
+
+.header-right {
+    justify-content: flex-end;
+    grid-column: 3;
+}
+
+/* Estilo dos botões */
+.header-buttons .btn-pink {
+    background-color: #fff;
+    color: var(--color-purple);
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(156, 39, 176, 0.3);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+}
+
+.header-buttons .btn-pink:hover {
+    background-color: var(--color-pink);
+    color: #fff;
+}
+
+.header-buttons .btn-gradient {
+    background: linear-gradient(45deg, var(--color-pink), var(--color-purple));
+    color: #fff;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(156, 39, 176, 0.5);
+    transition: filter 0.3s ease;
+}
+
+.header-buttons .btn-gradient:hover {
+    filter: brightness(1.1);
+}
+
+
+/* === CONTAINER DAS FICHAS - LAYOUT FLEXIVEL COM QUEBRA DE LINHA === */
+.fichas-lista.grid-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem; /* espaçamento entre cards */
+    justify-content: flex-start;
+    padding: 0 0.5rem;
+}
+
+/* === FICHAS COMO CARDS ORGANIZADOS EM BLOCO MENOR === */
+.ficha-card.styled-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    min-height: 380px;
+
+    /* novo: limita o tamanho do card e permite flexibilidade */
+    flex: 0 1 280px; /* largura base 280px, pode encolher se precisar */
+    max-width: 280px;
+}
+
+.ficha-card.styled-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(156, 39, 176, 0.4);
+}
+
+.ficha-card h3.ficha-nome {
+    font-size: 1.4rem;
+    color: var(--color-pink);
+    margin: 1rem 0 0.5rem;
+}
+
+.ficha-card p {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+    color: var(--color-text-light);
+}
+
+.ficha-foto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    margin-bottom: 1rem;
+}
+
+.ver-detalhes {
+    margin-top: 1rem;
+    width: 100%;
+}

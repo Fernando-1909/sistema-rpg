@@ -42,43 +42,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Envio do formulário de nova ficha
     // Envio do formulário de nova ficha/edição
 
-// Envio do formulário de nova ficha/edição
-const newSheetForm = document.getElementById('new-sheet-form');
-if (newSheetForm) {
-    newSheetForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Cria um FormData com os dados do formulário
-        const formData = new FormData(this);
-        
-        // Envia via fetch (sem AJAX, mas mantendo na mesma página)
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                // Fecha o modal e mostra mensagem sem recarregar
-                document.getElementById('create-sheet-modal').classList.remove('show');
-                alert('Alterações salvas com sucesso!');
-                
-                // Atualiza os dados na página se necessário
-                if (window.updateFichaList) {
-                    updateFichaList();
-                }
-            } else {
-                alert('Erro ao salvar as alterações');
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro na conexão');
-        });
-    });
-}
+// Envio do formulário
+document.getElementById('new-sheet-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Pega o campaign_id da URL atual
+    const urlParts = window.location.pathname.split('/');
+    const campaignId = urlParts.length > 2 ? urlParts[2] : '0';
+    
+    // Configura o action para a URL correta
+    this.action = `/fichas/${campaignId}/`;
+    
+    // Envia o formulário
+    this.submit();
+});
 
     // Contadores para novas perícias e ataques
     let skillCounter = 2;
@@ -352,9 +329,6 @@ window.addEventListener('beforeunload', function() {
     updateBar('energy-value');
 });
 
-// Parte Fernando, a parte superior possivelmente será alterada
-// NÃO MODIFICAR O QUE ESTÁ ABAIXO DESTE COMENTÁRIO!!! 
-
 document.addEventListener('DOMContentLoaded', function() {
     const energyBar = document.getElementById('energy-bar');
     if (energyBar) {
@@ -386,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function abrirModalFicha(button) {
+
     const modal = document.getElementById('detalhes-ficha-modal');
     const conteudo = document.getElementById('ficha-detalhes-content');
     
@@ -396,59 +371,112 @@ function abrirModalFicha(button) {
         hp, velocidade, energia, campanha, anotacoes, pericias, foto, id: fichaId
     } = button.dataset;
 
-
-    // Passar essa parte para o código html para facilitar a organização !!!!!!! //
     // Constrói o HTML do modal
     conteudo.innerHTML = `
-        <div class="ficha-detalhes-container">
-            ${foto ? `<img src="${foto}" alt="Foto de ${nome}" class="ficha-foto-modal">` : ''}
-            
-            <div class="ficha-detalhes-grid">
-                <div class="ficha-detalhes-col">
-                    <p><strong>Nome:</strong> ${nome}</p>
-                    <p><strong>Raça:</strong> ${raca}</p>
-                    <p><strong>Classe:</strong> ${classe}</p>
-                    <p><strong>Arma:</strong> ${arma}</p>
-                    <p><strong>Elemento:</strong> ${elemento}</p>
-                </div>
-                <div class="ficha-detalhes-col">
-                    <p><strong>Força:</strong> ${forca}</p>
-                    <p><strong>Vitalidade:</strong> ${vitalidade}</p>
-                    <p><strong>Agilidade:</strong> ${agilidade}</p>
-                    <p><strong>Carisma:</strong> ${carisma}</p>
-                    <p><strong>Inteligência:</strong> ${inteligencia}</p>
-                </div>
-                <div class="ficha-detalhes-col">
-                    <p><strong>HP:</strong> ${hp}</p>
-                    <p><strong>Velocidade:</strong> ${velocidade}</p>
-                    <p><strong>Energia:</strong> ${energia}</p>
-                    <p><strong>Campanha:</strong> ${campanha}</p>
-                </div>
+  <div class="ficha-detalhes-container">
+    ${foto ? `<img src="${foto}" alt="Foto de ${nome}" class="ficha-foto-modal">` : ''}
+
+        <!-- BARRAS DE STATUS INTERATIVAS -->
+        <div class="status-bars-container">
+        <div class="bar-section">
+            <label class="bar-label">HP</label>
+            <div class="bar-controls">
+            <button class="arrow-btn minus" data-target="modal-hp-value">-</button>
+            <div id="modal-hp-value" class="bar-value">${hp} / ${hp}</div>
+            <button class="arrow-btn plus" data-target="modal-hp-value">+</button>
             </div>
-            
-            <div class="ficha-detalhes-section">
-                <h3>Anotações</h3>
-                <p>${anotacoes}</p>
-            </div>
-            
-            <div class="ficha-detalhes-section">
-                <h3>Perícias</h3>
-                <p>${pericias}</p>
-            </div>
-            
-            <!-- Área dos Botões -->
-            <div class="modal-buttons">
-                <button onclick="editarFicha(${fichaId})" class="btn btn-gradient">
-                    <i class="fas fa-edit"></i> Editar
-                </button>
-                <button onclick="confirmarDelecao(${fichaId})" class="btn btn-pink">
-                    <i class="fas fa-trash"></i> Deletar
-                </button>
+            <div class="bar-bg">
+            <div class="bar-fill hp-fill" id="modal-hp-bar" style="width: 100%"></div>
             </div>
         </div>
 
+        <div class="bar-section">
+            <label class="bar-label">Energia</label>
+            <div class="bar-controls">
+            <button class="arrow-btn minus" data-target="modal-energy-value">-</button>
+            <div id="modal-energy-value" class="bar-value">${energia} / 5</div>
+            <button class="arrow-btn plus" data-target="modal-energy-value">+</button>
+            </div>
+            <div class="bar-bg">
+            <div class="bar-fill energy-fill" id="modal-energy-bar" style="width: ${(parseInt(energia)/5)*100}%"></div>
+            </div>
         </div>
+        </div>
+
+        <div class="ficha-detalhes-grid-lindo">
+        <!-- COLUNA ESQUERDA: INFORMAÇÕES BÁSICAS -->
+        <div class="detalhes-coluna-info">
+            <div class="info-item"><strong>Nome:</strong> ${nome}</div>
+            <div class="info-item"><strong>Raça:</strong> ${raca}</div>
+            <div class="info-item"><strong>Classe:</strong> ${classe}</div>
+            <div class="info-item"><strong>Arma:</strong> ${arma}</div>
+            <div class="info-item"><strong>Elemento:</strong> ${elemento}</div>
+            <div class="info-item"><strong>Campanha:</strong> ${campanha}</div>
+        </div>
+
+        <!-- COLUNA DIREITA: ATRIBUTOS COLORIDOS -->
+        <div class="detalhes-coluna-atributos">
+            <div class="atributo-tag forca">Força <span>${forca}</span></div>
+            <div class="atributo-tag vitalidade">Vitalidade <span>${vitalidade}</span></div>
+            <div class="atributo-tag agilidade">Agilidade <span>${agilidade}</span></div>
+            <div class="atributo-tag carisma">Carisma <span>${carisma}</span></div>
+            <div class="atributo-tag inteligencia">Inteligência <span>${inteligencia}</span></div>
+            <div class="atributo-tag velocidade">Velocidade <span>${velocidade}</span></div>
+        </div>
+        </div>
+
+
+
+
+        <div class="ficha-detalhes-section">
+        <h3>Anotações</h3>
+        <p>${anotacoes}</p>
+        </div>
+
+        <div class="ficha-detalhes-section">
+        <h3>Perícias</h3>
+        <p>${pericias}</p>
+        </div>
+
+        <div class="modal-buttons">
+        <button onclick="editarFicha(${fichaId})" class="btn btn-gradient">
+            <i class="fas fa-edit"></i> Editar
+        </button>
+        <button onclick="confirmarDelecao(${fichaId})" class="btn btn-pink">
+            <i class="fas fa-trash"></i> Deletar
+        </button>
+        </div>
+    </div>
     `;
+    // Controle das barras (dentro do modal)
+    const modalMaxHP = parseInt(hp) || 0;
+    const modalMaxEnergy = 5;
+
+    function atualizarBarraModal(targetId, max) {
+    const valueElement = document.getElementById(targetId);
+    const barElement = document.getElementById(targetId === 'modal-hp-value' ? 'modal-hp-bar' : 'modal-energy-bar');
+    
+    let [current, total] = valueElement.textContent.split('/').map(v => parseInt(v.trim()));
+    const percent = Math.max(0, Math.min(100, (current / max) * 100));
+    barElement.style.width = percent + '%';
+    }
+
+    document.querySelectorAll('.arrow-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const valueEl = document.getElementById(targetId);
+        let [current, total] = valueEl.textContent.split('/').map(v => parseInt(v.trim()));
+        const max = (targetId === 'modal-hp-value') ? modalMaxHP : modalMaxEnergy;
+
+        if (btn.classList.contains('plus') && current < max) current++;
+        if (btn.classList.contains('minus') && current > 0) current--;
+
+        valueEl.textContent = `${current} / ${max}`;
+        atualizarBarraModal(targetId, max);
+    });
+    });
+
+
 
     modal.classList.remove('hidden');
     modal.classList.add('show');
@@ -461,23 +489,40 @@ function fecharModalFicha() {
 
 function confirmarDelecao(fichaId) {
     if (confirm('⚠️ Tem certeza que deseja deletar PERMANENTEMENTE esta ficha?')) {
+        // Pega o CSRF token
+        const csrftoken = getCookie('csrftoken');
+        
+        // Envia a requisição DELETE
         fetch(`/fichas/${fichaId}/`, {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
+                'X-CSRFToken': csrftoken,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                ficha_id: fichaId
+            })
         })
         .then(response => {
-            if (response.ok) {
+            if (response.status === 403) {
+                throw new Error('Você não tem permissão para deletar esta ficha');
+            }
+            if (!response.ok) {
+                throw new Error('Erro ao deletar ficha');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Ficha deletada com sucesso!');
                 window.location.reload();
             } else {
-                alert('❌ Erro ao deletar! Verifique suas permissões.');
+                alert('Erro ao deletar ficha: ' + (data.error || 'Erro desconhecido'));
             }
         })
         .catch(error => {
             console.error('Erro:', error);
-            alert('❌ Falha na conexão. Tente novamente.');
+            alert('❌ ' + error.message);
         });
     }
 }
@@ -505,7 +550,7 @@ function editarFicha(fichaId) {
     editModal.querySelector('h2').textContent = 'Editar Ficha';
     editModal.querySelector('button[type="submit"]').textContent = 'Salvar Alterações';
     
-    // Preenche os campos com os dados do botão clicado
+    // Preenche os campos com os dados
     const button = document.querySelector(`button[data-id="${fichaId}"]`);
     if (button) {
         document.getElementById('new-character-name').value = button.dataset.nome || '';
@@ -525,17 +570,17 @@ function editarFicha(fichaId) {
         document.getElementById('new-character-skills').value = button.dataset.pericias || '';
     }
     
-    // Atualiza o action do formulário
+     // Atualiza o action do formulário
     const form = document.getElementById('new-sheet-form');
-    form.action = `/ficha/editar/${fichaId}/`;
+    form.action = `/fichas/editar/${fichaId}/`;
     
     // Adiciona campo hidden com o ID
-    let idInput = form.querySelector('input[name="ficha_id"]');
+    let idInput = document.querySelector('input[name="ficha_id"]');
     if (!idInput) {
         idInput = document.createElement('input');
         idInput.type = 'hidden';
         idInput.name = 'ficha_id';
-        form.appendChild(idInput);
+        newSheetForm.appendChild(idInput);
     }
     idInput.value = fichaId;
     
@@ -568,11 +613,77 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Fechar modal após submit bem-sucedido
-document.getElementById('new-sheet-form').addEventListener('submit', function() {
-    // Isso garante que o modal será fechado após o recarregamento
-    localStorage.setItem('fecharModal', 'true');
+// Substitua todo o bloco do evento submit do formulário por este:
+document.getElementById('new-sheet-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Pega o campaign_id da URL atual
+    const urlParts = window.location.pathname.split('/');
+    const campaignId = urlParts.length > 2 ? urlParts[2] : '0';
+    
+    // Verifica se é edição ou criação
+    const isEditing = this.action.includes('editar');
+    
+    // Configura o action para a URL correta
+    if (isEditing) {
+        // Mantém a URL de edição que já estava configurada
+    } else {
+        this.action = `/fichas/${campaignId}/`;
+    }
+    
+    // Envia o formulário
+    this.submit();
 });
+
+// Substitua a função editarFicha por esta:
+function editarFicha(fichaId) {
+    // Fecha o modal de detalhes
+    fecharModalFicha();
+    
+    // Abre o modal de edição
+    const editModal = document.getElementById('create-sheet-modal');
+    
+    // Configura como modal de edição
+    editModal.querySelector('h2').textContent = 'Editar Ficha';
+    editModal.querySelector('button[type="submit"]').textContent = 'Salvar Alterações';
+    
+    // Preenche os campos com os dados
+    const button = document.querySelector(`button[data-id="${fichaId}"]`);
+    if (button) {
+        document.getElementById('new-character-name').value = button.dataset.nome || '';
+        document.getElementById('new-character-race').value = button.dataset.raca || '';
+        document.getElementById('new-character-class').value = button.dataset.classe || '';
+        document.getElementById('new-character-weapon').value = button.dataset.arma || '';
+        document.getElementById('new-character-element').value = button.dataset.elemento || '';
+        document.getElementById('new-character-strength').value = button.dataset.forca || '0';
+        document.getElementById('new-character-vitality').value = button.dataset.vitalidade || '0';
+        document.getElementById('new-character-agility').value = button.dataset.agilidade || '0';
+        document.getElementById('new-character-charisma').value = button.dataset.carisma || '0';
+        document.getElementById('new-character-intelligence').value = button.dataset.inteligencia || '0';
+        document.getElementById('new-character-hp').value = button.dataset.hp || '0';
+        document.getElementById('new-character-speed').value = button.dataset.velocidade || '0';
+        document.getElementById('new-character-energy').value = button.dataset.energia || '0';
+        document.getElementById('new-character-opinion').value = button.dataset.anotacoes || '';
+        document.getElementById('new-character-skills').value = button.dataset.pericias || '';
+    }
+    
+    // Atualiza o action do formulário
+    const form = document.getElementById('new-sheet-form');
+    form.action = `/fichas/${fichaId}/`;  // Usando a mesma URL para edição
+    
+    // Adiciona campo hidden com o ID
+    let idInput = document.querySelector('input[name="ficha_id"]');
+    if (!idInput) {
+        idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'ficha_id';
+        form.appendChild(idInput);
+    }
+    idInput.value = fichaId;
+    
+    // Abre o modal
+    editModal.classList.remove('hidden');
+}
 
 // Verificar se deve fechar o modal ao carregar a página
 window.addEventListener('load', function() {

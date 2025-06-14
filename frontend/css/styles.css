@@ -742,25 +742,6 @@ body {
 
 /* Adicionando ao seu arquivo style.css existente */
 
-/* Estilos específicos para as páginas de campanhas e fichas */
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-xl);
-}
-
-.page-title {
-    font-size: 2rem;
-    color: var(--color-text);
-    margin-bottom: var(--space-sm);
-}
-
-.page-subtitle {
-    color: var(--color-text-light);
-    margin-bottom: var(--space-md);
-}
-
 /* Grid de Campanhas */
 .campaigns-grid {
     display: grid;

@@ -27,9 +27,10 @@ urlpatterns = [
     path('campanhas/listar/', listar_campanhas),
     path('campanhas/criar/', criar_campanha, name='criar_campanha'),
     path('fichas/<int:campaign_id>/', listar_fichas, name='listar_fichas'),
-    path('ficha/novo/', criar_ficha, name='criar_ficha'),
+    #path('ficha/novo/', criar_ficha, name='criar_ficha'),
     path('ficha/<int:ficha_id>/', visualizar_ficha, name='visualizar_ficha'),
-    path('ficha/<int:ficha_id>/editar/', editar_ficha, name='editar_ficha'),
+    path('fichas/editar/', editar_ficha, name='editar_ficha'),  # Para criação
+    path('fichas/editar/<int:ficha_id>/', editar_ficha, name='editar_ficha'),
     path('user-info/', user_info),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
